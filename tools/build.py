@@ -23,6 +23,12 @@ def main():
                         "const login = document.getElementById('login'); login.hidden = true;", 1)
     html = html.replace("document.getElementById('pw').value = ''; login.hidden = false; });",
                         "try { Object.keys(sessionStorage).filter(k => k.startsWith('bbp-k-')).forEach(k => sessionStorage.removeItem(k)); } catch (er) {} location.reload(); });", 1)
+    # Inline Chart.js so the decrypted page has no external script (document.write blocks cross-site scripts on slow connections).
+    tag = '<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>'
+    vendor = open(os.path.join(os.path.dirname(__file__), 'vendor', 'chart.umd.4.4.1.js'), encoding='utf-8').read()
+    assert '</script' not in vendor.lower()
+    if tag in html:
+        html = html.replace(tag, '<script>' + vendor + '</script>', 1)
     codes = json.load(open(codes_path))['codes']
     key = AESGCM.generate_key(256); iv = os.urandom(12)
     ct = AESGCM(key).encrypt(iv, html.encode('utf-8'), None)

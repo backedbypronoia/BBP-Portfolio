@@ -71,7 +71,12 @@ async function openWith(raw) {
   document.open(); document.write(html); document.close();
 }
 (async () => {
-  try { const k = sessionStorage.getItem('bbp-k-' + PAYLOAD.v); if (k) { await openWith(b64(k)); return; } } catch (e) {}
+  let k = null; try { k = sessionStorage.getItem('bbp-k-' + PAYLOAD.v); } catch (e) {}
+  if (!k) return;
+  document.documentElement.style.visibility = 'hidden';
+  // Replace the document only after the gate has fully loaded, or the two pages get mixed.
+  if (document.readyState !== 'complete') await new Promise(r => addEventListener('load', r, {once: true}));
+  try { await openWith(b64(k)); } catch (e) { document.documentElement.style.visibility = ''; }
 })();
 document.getElementById('f').addEventListener('submit', async e => {
   e.preventDefault();
