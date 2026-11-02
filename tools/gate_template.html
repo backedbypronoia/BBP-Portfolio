@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>BBP Portfolio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%233E1880'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='%23D4A93C'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&display=swap">
+<style>
+:root{--cream:#F1E3C2;--gold:#D4A93C;--ink:#17121F}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:#2A0F57;color:var(--cream);font:14px Tahoma,"Segoe UI",Verdana,sans-serif}
+.login{position:fixed;inset:0;display:grid;grid-template-rows:72px 1fr 72px}
+.band{background:linear-gradient(180deg,#1A0840,#2A0F57);border-bottom:2px solid var(--gold)}
+.band.b{border-bottom:0;border-top:2px solid #6E44B8;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-size:11px;color:#CDBDEB}
+.mid{display:grid;grid-template-columns:minmax(0,1fr) 2px minmax(0,1fr);align-items:center;gap:40px;padding:0 24px;background:radial-gradient(ellipse at 30% 40%,#6A3AC0,#3E1880 60%,#2A0F57)}
+.left{justify-self:end;text-align:right}
+.mark{display:inline-flex;align-items:center;gap:12px;background:#4A1E8E;border:1px solid #6E44B8;border-radius:6px;padding:8px 20px 10px;box-shadow:0 10px 40px rgba(0,0,0,.5);margin-bottom:14px}
+.mark span{font:900 clamp(24px,3.4vw,40px)/1 "Playfair Display",Georgia,serif;color:var(--cream);white-space:nowrap}
+.mark .sp{color:var(--gold);font-size:clamp(20px,2.8vw,32px)}
+.left p{margin:0;font-size:15px;color:#E5DAF7}
+.divider{height:60%;background:linear-gradient(180deg,transparent,#B9A2E6,transparent)}
+form{display:flex;align-items:center;gap:16px;padding:12px 16px;border-radius:8px;background:linear-gradient(90deg,rgba(255,255,255,.12),rgba(255,255,255,0));max-width:420px}
+.avatar{width:64px;height:64px;flex:none;border:3px solid #fff;border-radius:6px;background:linear-gradient(135deg,#4A9268,#215239);display:grid;place-items:center;color:var(--gold);font-size:34px}
+b.who{display:block;font:bold 20px "Trebuchet MS",Tahoma,sans-serif;color:#fff;margin-bottom:6px}
+.pw{display:flex;gap:6px}
+input{width:170px;max-width:100%;padding:4px 6px;border:1px solid #2A0F57;border-radius:3px;font:13px Tahoma,sans-serif;color:var(--ink)}
+button{width:28px;height:26px;border:1px solid #fff;border-radius:4px;background:linear-gradient(180deg,#63C163,#2D6B4A);color:#fff;font-weight:bold;cursor:pointer}
+small{display:block;margin-top:6px;color:#CDBDEB}
+small.bad{color:#FFB4A8}
+@media (max-width:640px){.mid{grid-template-columns:minmax(0,1fr);gap:24px;align-content:center}.left{justify-self:start;text-align:left}.divider{display:none}}
+</style>
+</head>
+<body>
+<div class="login">
+  <div class="band"></div>
+  <div class="mid">
+    <div class="left"><div class="mark"><span class="sp">&#10022;</span><span>BACKED BY PRONOIA</span></div><p>To begin, sign in with your paid account</p></div>
+    <div class="divider"></div>
+    <form id="f">
+      <div class="avatar">&#10022;</div>
+      <div><b class="who">Paid subscriber</b>
+        <div class="pw"><input id="pw" type="password" placeholder="Your access code" autocomplete="off" aria-label="Access code"><button type="submit" aria-label="Sign in">&rarr;</button></div>
+        <small id="msg">Your access code is in the latest paid post.</small>
+      </div>
+    </form>
+  </div>
+  <div class="band b"><span>&#10022; BBP Portfolio &middot; members only</span><span>Not financial advice</span></div>
+</div>
+<script>
+// Encrypted payload: AES-256-GCM. The page key is wrapped once per access code (PBKDF2-SHA256).
+const PAYLOAD = __PAYLOAD__;
+const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function unwrap(code) {
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(code), 'PBKDF2', false, ['deriveKey']);
+  for (const w of PAYLOAD.wraps) {
+    try {
+      const kek = await crypto.subtle.deriveKey({name: 'PBKDF2', salt: b64(w.salt), iterations: PAYLOAD.iter, hash: 'SHA-256'}, base, {name: 'AES-GCM', length: 256}, false, ['decrypt']);
+      return new Uint8Array(await crypto.subtle.decrypt({name: 'AES-GCM', iv: b64(w.iv)}, kek, b64(w.ct)));
+    } catch (e) {}
+  }
+  return null;
+}
+async function openWith(raw) {
+  const key = await crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['decrypt']);
+  const html = new TextDecoder().decode(await crypto.subtle.decrypt({name: 'AES-GCM', iv: b64(PAYLOAD.iv)}, key, b64(PAYLOAD.ct)));
+  try { sessionStorage.setItem('bbp-in', '1'); sessionStorage.setItem('bbp-k-' + PAYLOAD.v, btoa(String.fromCharCode(...raw))); } catch (e) {}
+  document.open(); document.write(html); document.close();
+}
+(async () => {
+  try { const k = sessionStorage.getItem('bbp-k-' + PAYLOAD.v); if (k) { await openWith(b64(k)); return; } } catch (e) {}
+})();
+document.getElementById('f').addEventListener('submit', async e => {
+  e.preventDefault();
+  const msg = document.getElementById('msg'), v = document.getElementById('pw').value.trim();
+  msg.className = ''; msg.textContent = 'Checking...';
+  let raw = await unwrap(v); if (!raw) raw = await unwrap(v.toUpperCase());
+  if (!raw) { msg.className = 'bad'; msg.textContent = 'Wrong code. Your access code is in the latest paid post.'; return; }
+  await openWith(raw);
+});
+</script>
+</body>
+</html>
