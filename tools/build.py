@@ -39,7 +39,9 @@ def main():
         wraps.append({'salt': b64(salt), 'iv': b64(wiv), 'ct': b64(AESGCM(kek).encrypt(wiv, key, None))})
     payload = {'v': hashlib.sha256(ct).hexdigest()[:12], 'iter': ITER, 'iv': b64(iv), 'ct': b64(ct), 'wraps': wraps}
     tpl = open(os.path.join(os.path.dirname(__file__), 'gate_template.html'), encoding='utf-8').read()
-    open(out, 'w', encoding='utf-8').write(tpl.replace('__PAYLOAD__', json.dumps(payload)))
+    import datetime, zoneinfo
+    stamp = datetime.datetime.now(zoneinfo.ZoneInfo('Europe/Madrid')).strftime('%d %b %H:%M')
+    open(out, 'w', encoding='utf-8').write(tpl.replace('__PAYLOAD__', json.dumps(payload)).replace('__BUILD__', stamp))
     print('wrote', out, len(ct), 'bytes encrypted,', len(wraps), 'codes')
 
 if __name__ == '__main__':
