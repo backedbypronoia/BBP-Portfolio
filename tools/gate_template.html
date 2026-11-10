@@ -19,10 +19,10 @@
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{background:#2A0F57;color:var(--cream);font:14px Tahoma,"Segoe UI",Verdana,sans-serif}
-.login{position:fixed;inset:0;display:grid;grid-template-rows:72px 1fr 72px}
+.login{position:fixed;inset:0;display:grid;grid-template-rows:56px 1fr 56px;overflow:auto}
 .band{background:linear-gradient(180deg,#1A0840,#2A0F57);border-bottom:2px solid var(--gold)}
 .band.b{border-bottom:0;border-top:2px solid #6E44B8;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-size:11px;color:#CDBDEB}
-.mid{display:grid;grid-template-columns:minmax(0,1fr) 2px minmax(0,1fr);align-items:center;gap:40px;padding:0 24px;background:radial-gradient(ellipse at 30% 40%,#6A3AC0,#3E1880 60%,#2A0F57)}
+.mid{display:grid;grid-template-columns:minmax(0,1.25fr) 2px minmax(0,1fr);align-items:center;gap:40px;padding:28px 24px;background:radial-gradient(ellipse at 30% 40%,#6A3AC0,#3E1880 60%,#2A0F57)}
 .left{justify-self:end;text-align:right}
 .mark{display:inline-flex;align-items:center;gap:12px;background:#4A1E8E;border:1px solid #6E44B8;border-radius:6px;padding:8px 20px 10px;box-shadow:0 10px 40px rgba(0,0,0,.5);margin-bottom:14px}
 .mark span{font:900 clamp(24px,3.4vw,40px)/1 "Playfair Display",Georgia,serif;color:var(--cream);white-space:nowrap}
@@ -38,24 +38,38 @@ input{width:170px;max-width:100%;padding:4px 6px;border:1px solid #2A0F57;border
 button{width:28px;height:26px;border:1px solid #fff;border-radius:4px;background:linear-gradient(180deg,#63C163,#2D6B4A);color:#fff;font-weight:bold;cursor:pointer}
 small{display:block;margin-top:6px;color:#CDBDEB}
 small.bad{color:#FFB4A8}
-@media (max-width:640px){.mid{grid-template-columns:minmax(0,1fr);gap:24px;align-content:center}.left{justify-self:start;text-align:left}.divider{display:none}}
+.prev{position:relative;display:block;margin-top:18px;width:min(620px,100%);margin-left:auto;border-radius:10px;overflow:hidden;border:2px solid rgba(212,169,60,.7);box-shadow:0 18px 50px rgba(0,0,0,.55);text-decoration:none}
+.prev img{display:block;width:100%;height:auto}
+.prev .tag{position:absolute;right:12px;bottom:40px;background:#B8321F;color:#fff;font:bold 11px Tahoma,sans-serif;letter-spacing:1px;padding:4px 9px;border-radius:10px}
+.right{display:flex;flex-direction:column;gap:18px;max-width:420px}
+.cta{padding:16px 18px;border-radius:10px;background:rgba(26,8,64,.55);border:1px solid rgba(212,169,60,.6)}
+.cta b{display:block;font:900 22px "Playfair Display",Georgia,serif;color:#fff;margin-bottom:4px}
+.cta span{display:block;color:#E5DAF7;font-size:13px;line-height:1.5}
+.cta ul{margin:10px 0 14px;padding:0;list-style:none;color:#E5DAF7;font-size:13px;line-height:1.7}
+.cta li::before{content:"\2726  ";color:var(--gold)}
+.cta a{display:inline-block;background:linear-gradient(180deg,#E9C25A,#C9982A);color:#1A0840;font:bold 14px Tahoma,sans-serif;padding:10px 18px;border-radius:6px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.cta a:hover{filter:brightness(1.08)}
+@media (max-width:900px){.mid{grid-template-columns:minmax(0,1fr);gap:24px;align-content:start}.left{justify-self:start;text-align:left}.divider{display:none}.prev{margin-left:0}.right{order:-1}}
 </style>
 </head>
 <body>
 <div class="login">
   <div class="band"></div>
   <div class="mid">
-    <div class="left"><div class="mark"><span class="sp">&#10022;</span><span>BACKED BY PRONOIA</span></div><p>To begin, sign in with your paid account</p></div>
+    <div class="left"><div class="mark"><span class="sp">&#10022;</span><span>BACKED BY PRONOIA</span></div><p>10 stocks. Every trade, every loss, live against the S&amp;P 500.</p><a class="prev" href="https://backedbypronoia.substack.com/subscribe" target="_blank" rel="noopener"><span class="tag">&#9679; LIVE</span><img src="preview.jpg" alt="Preview of the BBP Portfolio app, names and numbers blurred" width="1200" height="750"></a></div>
     <div class="divider"></div>
-    <form id="f">
+    <div class="right"><form id="f">
       <div class="avatar">&#10022;</div>
       <div><b class="who">Paid subscriber</b>
         <div class="pw"><input id="pw" type="password" placeholder="Your access code" autocomplete="off" aria-label="Access code"><button type="submit" aria-label="Sign in">&rarr;</button></div>
         <small id="msg">Your access code is in the latest paid post.</small>
       </div>
     </form>
+    <div class="cta"><b>No access code yet?</b><span>The code comes with a paid subscription to Backed by Pronoia.</span>
+      <ul><li>The full portfolio: every name, weight and entry</li><li>Every trade, with the reason to buy and to sell</li><li>A Sunday update, plus the deep dives</li></ul>
+      <a href="https://backedbypronoia.substack.com/subscribe" target="_blank" rel="noopener">Get the access code &rarr;</a></div></div>
   </div>
-  <div class="band b"><span>&#10022; BBP Portfolio &middot; members only</span><span>Not financial advice · for information only · do your own research <small style="display:inline;opacity:.6;margin-left:8px">build __BUILD__</small></span></div>
+  <div class="band b"><span>&#10022; BBP Portfolio, members only</span><span>Not financial advice. For information only. Do your own research. <small style="display:inline;opacity:.6;margin-left:8px">build __BUILD__</small></span></div>
 </div>
 <script>
 // Encrypted payload: AES-256-GCM. The page key is wrapped once per access code (PBKDF2-SHA256).
